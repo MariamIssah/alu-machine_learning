@@ -1,7 +1,3 @@
-Thanks! Here's a comprehensive `README.md` for **all the tasks** in your `math/linear_algebra` directory (basic + advanced), part of your `alu-machine_learning` repository.
-
----
-
 # Linear Algebra Tasks
 
 This directory contains Python implementations of various linear algebra tasks for the ALU Machine Learning curriculum. The tasks range from basic matrix operations to more advanced manipulations like slicing and concatenation.
@@ -170,7 +166,3 @@ African Leadership University
 ## 📜 License
 
 These scripts are part of the ALU Machine Learning curriculum and are intended for educational use.
-
----
-
-Let me know if you’d like me to auto-generate this as a `.md` or `.txt` file!
