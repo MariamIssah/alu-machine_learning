@@ -18,4 +18,3 @@ def np_matmul(m_a, m_b):
         numpy.ndarray: The result of the matrix multiplication.
     """
     return np.matmul(m_a, m_b)
-
