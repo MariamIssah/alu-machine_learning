@@ -51,4 +51,3 @@ class MultiNormal:
         pdf = first * np.exp(third)
 
         return pdf[0][0]
-    
