@@ -28,7 +28,13 @@ def maximization(X, g):
     k = g.shape[0]
     if g.shape[1] != n:
         return None, None, None
+    if k == 0:
+        return None, None, None
+    if np.any(g < 0):
+        return None, None, None
     n_soft = np.sum(g, axis=1, keepdims=True)
+    if np.any(n_soft <= 0):
+        return None, None, None
     pi = (np.sum(g, axis=1) / n).reshape(k)
     m = (g @ X) / n_soft
     S = np.zeros((k, d, d))
