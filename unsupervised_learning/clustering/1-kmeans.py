@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+"""
+K-means clustering implementation.
+"""
+
+import numpy as np
+initialize = __import__('0-initialize').initialize
+
+
+def kmeans(X, k, iterations=1000):
+    """
+    Perform K-means clustering on a dataset.
+
+    Args:
+        X: numpy.ndarray of shape (n, d) - the dataset
+        k: positive integer - number of clusters
+        iterations: positive integer - maximum number of iterations
+
+    Returns:
+        (C, clss) or (None, None) on failure.
+        C: centroids shape (k, d), clss: cluster index per point shape (n,)
+    """
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
+        return None, None
+    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
+        return None, None
+    if not isinstance(iterations, int) or iterations <= 0:
+        return None, None
+    n, d = X.shape
+    C = initialize(X, k)
+    if C is None:
+        return None, None
+    low = np.min(X, axis=0)
+    high = np.max(X, axis=0)
+    for _ in range(iterations):
+        # Assign each point to nearest centroid (no loop: use broadcasting)
+        # distances shape (n, k): for each point, distance to each centroid
+        diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]  # (n, k, d)
+        dist_sq = np.sum(diff * diff, axis=2)  # (n, k)
+        clss = np.argmin(dist_sq, axis=1)  # (n,)
+        # Update centroids
+        C_new = np.copy(C)
+        empty = []
+        for j in range(k):
+            mask = clss == j
+            if np.any(mask):
+                C_new[j] = np.mean(X[mask], axis=0)
+            else:
+                empty.append(j)
+        if empty:
+            C_new[empty] = np.random.uniform(low=low, high=high, size=(len(empty), d))
+        if np.allclose(C, C_new):
+            return C_new, clss
+        C = C_new
+    return C, clss
