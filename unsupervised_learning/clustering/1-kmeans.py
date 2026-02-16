@@ -4,7 +4,6 @@ K-means clustering implementation.
 """
 
 import numpy as np
-initialize = __import__('0-initialize').initialize
 
 
 def kmeans(X, k, iterations=1000):
@@ -27,11 +26,9 @@ def kmeans(X, k, iterations=1000):
     if not isinstance(iterations, int) or iterations <= 0:
         return None, None
     n, d = X.shape
-    C = initialize(X, k)
-    if C is None:
-        return None, None
     low = np.min(X, axis=0)
     high = np.max(X, axis=0)
+    C = np.random.uniform(low=low, high=high, size=(k, d))
     for _ in range(iterations):
         # Assign each point to nearest centroid (no loop: use broadcasting)
         # distances shape (n, k): for each point, distance to each centroid
