@@ -34,8 +34,7 @@ def pdf(X, m, S):
         return None
     S_inv = np.linalg.inv(S)
     diff = X - m
-    # (x-m)^T S^{-1} (x-m) for each x: diff @ S_inv @ diff.T would give matrix
-    # For each row i: diff[i] @ S_inv @ diff[i]
+    # (x-m)^T S^{-1} (x-m) per point: diff @ S_inv @ diff.T; per row: diff @ S_inv * diff
     mahal = np.sum(diff @ S_inv * diff, axis=1)
     log_p = (-0.5 * (d * np.log(2 * np.pi) + logdet + mahal))
     P = np.exp(log_p)
