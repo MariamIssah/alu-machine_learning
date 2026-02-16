@@ -25,12 +25,14 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
     """
     if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None, None
+    if not isinstance(iterations, int) or iterations <= 0:
+        return None, None
     n = X.shape[0]
     if kmax is None:
         kmax = n
-    if not isinstance(kmin, int) or kmin < 1 or not isinstance(kmax, int) or kmax < kmin:
+    if not isinstance(kmin, int) or kmin < 1:
         return None, None
-    if not isinstance(iterations, int) or iterations <= 0:
+    if not isinstance(kmax, int) or kmax < kmin:
         return None, None
     results = []
     vars_list = []
