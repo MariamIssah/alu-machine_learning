@@ -45,7 +45,9 @@ def kmeans(X, k, iterations=1000):
             else:
                 empty.append(j)
         if empty:
-            C_new[empty] = np.random.uniform(low=low, high=high, size=(len(empty), d))
+            n_empty = len(empty)
+            C_new[empty] = np.random.uniform(low=low, high=high,
+                                             size=(n_empty, d))
         if np.allclose(C, C_new):
             return C_new, clss
         C = C_new
