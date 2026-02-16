@@ -16,7 +16,8 @@ def pdf(X, m, S):
         S: numpy.ndarray of shape (d, d) - covariance matrix
 
     Returns:
-        P: numpy.ndarray of shape (n,) PDF values, min 1e-300, or None on failure
+        P: numpy.ndarray of shape (n,) PDF values, min 1e-300,
+        or None on failure
     """
     if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None
@@ -34,7 +35,7 @@ def pdf(X, m, S):
         return None
     S_inv = np.linalg.inv(S)
     diff = X - m
-    # (x-m)^T S^{-1} (x-m) per point: diff @ S_inv @ diff.T; per row: diff @ S_inv * diff
+    # (x-m)^T S^{-1} (x-m) per point; mahal = diff @ S_inv * diff summed
     mahal = np.sum(diff @ S_inv * diff, axis=1)
     log_p = (-0.5 * (d * np.log(2 * np.pi) + logdet + mahal))
     P = np.exp(log_p)
