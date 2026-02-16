@@ -35,11 +35,13 @@ def kmeans(X, k, iterations=1000):
         diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]  # (n, k, d)
         dist_sq = np.sum(diff * diff, axis=2)  # (n, k)
         clss = np.argmin(dist_sq, axis=1)  # (n,)
-        # Update centroids: vectorized only (no second loop)
-        one_hot = (clss[:, np.newaxis] == np.arange(k)).astype(np.float64)
-        n_per = np.sum(one_hot, axis=0)
+        # Update centroids: np.add.at sums in index order (matches np.mean)
+        C_new = np.zeros((k, d), dtype=np.float64)
+        np.add.at(C_new, (np.repeat(clss, d), np.tile(np.arange(d), n)),
+                  X.ravel())
+        n_per = np.bincount(clss, minlength=k)
         safe_n = np.where(n_per > 0, n_per, 1)[:, np.newaxis]
-        C_new = (one_hot.T @ X) / safe_n
+        C_new = C_new / safe_n
         empty_mask = (n_per == 0)
         if np.any(empty_mask):
             n_empty = int(np.sum(empty_mask))
