@@ -6,22 +6,6 @@ K-means clustering implementation.
 import numpy as np
 
 
-def _update_centroids(X, C, clss, k, low, high):
-    """Update centroids from assignments; uses np.mean per cluster."""
-    C_new = np.copy(C)
-    empty = []
-    for j in range(k):
-        mask = clss == j
-        if np.any(mask):
-            C_new[j] = np.mean(X[mask], axis=0)
-        else:
-            empty.append(j)
-    if empty:
-        C_new[empty] = np.random.uniform(low=low, high=high,
-                                         size=(len(empty), C.shape[1]))
-    return C_new
-
-
 def kmeans(X, k, iterations=1000):
     """
     Perform K-means clustering on a dataset.
@@ -49,7 +33,17 @@ def kmeans(X, k, iterations=1000):
         diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]
         dist_sq = np.sum(diff * diff, axis=2)
         clss = np.argmin(dist_sq, axis=1)
-        C_new = _update_centroids(X, C, clss, k, low, high)
+        C_new = np.copy(C)
+        empty = []
+        for j in range(k):
+            mask = clss == j
+            if np.any(mask):
+                C_new[j] = np.mean(X[mask], axis=0)
+            else:
+                empty.append(j)
+        if empty:
+            C_new[empty] = np.random.uniform(low=low, high=high,
+                                             size=(len(empty), d))
         if np.allclose(C, C_new):
             return C_new, clss
         C = C_new
