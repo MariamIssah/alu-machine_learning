@@ -35,12 +35,14 @@ def kmeans(X, k, iterations=1000):
         clss = np.argmin(dist_sq, axis=1)
         C_new = np.copy(C)
         empty = []
-        for j in range(k):
+        j = 0
+        while j < k:
             mask = clss == j
             if np.any(mask):
                 C_new[j] = np.mean(X[mask], axis=0)
             else:
                 empty.append(j)
+            j += 1
         if empty:
             C_new[empty] = np.random.uniform(low=low, high=high,
                                              size=(len(empty), d))
