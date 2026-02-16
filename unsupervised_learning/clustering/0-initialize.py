@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Initialize cluster centroids for K-means with multivariate uniform distribution.
+Initialize cluster centroids for K-means with multivariate uniform
+distribution.
 """
 
 import numpy as np
@@ -15,7 +16,8 @@ def initialize(X, k):
         k: positive integer - number of clusters
 
     Returns:
-        numpy.ndarray of shape (k, d) with initialized centroids, or None on failure
+        numpy.ndarray of shape (k, d) with initialized centroids,
+        or None on failure
     """
     if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None
