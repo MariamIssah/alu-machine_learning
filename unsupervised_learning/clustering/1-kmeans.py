@@ -35,16 +35,18 @@ def kmeans(X, k, iterations=1000):
         diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]  # (n, k, d)
         dist_sq = np.sum(diff * diff, axis=2)  # (n, k)
         clss = np.argmin(dist_sq, axis=1)  # (n,)
-        # Update centroids: one-hot (n,k), sum and reinit empty (no inner loop)
-        one_hot = (clss[:, np.newaxis] == np.arange(k)).astype(np.float64)
-        n_per = np.sum(one_hot, axis=0)
-        denom = np.where(n_per > 0, n_per, 1)[:, np.newaxis]
-        C_new = (one_hot.T @ X) / denom
-        empty_mask = (n_per == 0)
-        if np.any(empty_mask):
-            n_empty = int(np.sum(empty_mask))
-            C_new[empty_mask] = np.random.uniform(low=low, high=high,
-                                                  size=(n_empty, d))
+        # Update centroids (loop so mean matches reference output)
+        C_new = np.copy(C)
+        empty = []
+        for j in range(k):
+            mask = clss == j
+            if np.any(mask):
+                C_new[j] = np.mean(X[mask], axis=0)
+            else:
+                empty.append(j)
+        if empty:
+            C_new[empty] = np.random.uniform(low=low, high=high,
+                                              size=(len(empty), d))
         if np.allclose(C, C_new):
             return C_new, clss
         C = C_new
