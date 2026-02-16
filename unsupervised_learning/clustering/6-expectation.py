@@ -18,9 +18,9 @@ def expectation(X, pi, m, S):
         S: numpy.ndarray of shape (k, d, d) - covariance matrices
 
     Returns:
-        (g, l) or (None, None) on failure.
+        (g, log_lik) or (None, None) on failure.
         g: shape (k, n) posterior probabilities
-        l: total log likelihood
+        log_lik: total log likelihood
     """
     if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None, None
@@ -30,6 +30,10 @@ def expectation(X, pi, m, S):
         return None, None
     n, d = X.shape
     k = pi.shape[0]
+    if m.shape[0] != k or m.shape[1] != d:
+        return None, None
+    if S.shape[0] != k or S.shape[1] != d or S.shape[2] != d:
+        return None, None
     weighted = np.zeros((k, n))
     for j in range(k):
         P_j = pdf(X, m[j], S[j])
@@ -38,5 +42,5 @@ def expectation(X, pi, m, S):
         weighted[j] = pi[j] * P_j
     total = np.sum(weighted, axis=0, keepdims=True)
     g = np.where(total > 0, weighted / total, 0)
-    l = np.sum(np.log(np.sum(weighted, axis=0) + 1e-300))
-    return g, l
+    log_lik = np.sum(np.log(np.sum(weighted, axis=0) + 1e-300))
+    return g, log_lik
