@@ -35,10 +35,9 @@ def kmeans(X, k, iterations=1000):
         diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]  # (n, k, d)
         dist_sq = np.sum(diff * diff, axis=2)  # (n, k)
         clss = np.argmin(dist_sq, axis=1)  # (n,)
-        # Update centroids: np.add.at sums in index order (matches np.mean)
+        # Update centroids: np.add.at adds X[i] to C_new[clss[i]] in order
         C_new = np.zeros((k, d), dtype=np.float64)
-        np.add.at(C_new, (np.repeat(clss, d), np.tile(np.arange(d), n)),
-                  X.ravel())
+        np.add.at(C_new, clss, X)
         n_per = np.bincount(clss, minlength=k)
         safe_n = np.where(n_per > 0, n_per, 1)[:, np.newaxis]
         C_new = C_new / safe_n
