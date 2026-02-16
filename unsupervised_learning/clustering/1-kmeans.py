@@ -30,22 +30,20 @@ def kmeans(X, k, iterations=1000):
     high = np.max(X, axis=0)
     C = np.random.uniform(low=low, high=high, size=(k, d))
     for _ in range(iterations):
-        # Assign each point to nearest centroid (no loop: use broadcasting)
-        # distances shape (n, k): each point's distance to each centroid
-        diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]  # (n, k, d)
-        dist_sq = np.sum(diff * diff, axis=2)  # (n, k)
-        clss = np.argmin(dist_sq, axis=1)  # (n,)
-        # Update centroids: np.add.at adds X[i] to C_new[clss[i]] in order
-        C_new = np.zeros((k, d), dtype=np.float64)
-        np.add.at(C_new, clss, X)
-        n_per = np.bincount(clss, minlength=k)
-        safe_n = np.where(n_per > 0, n_per, 1)[:, np.newaxis]
-        C_new = C_new / safe_n
-        empty_mask = (n_per == 0)
-        if np.any(empty_mask):
-            n_empty = int(np.sum(empty_mask))
-            C_new[empty_mask] = np.random.uniform(low=low, high=high,
-                                                  size=(n_empty, d))
+        diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]
+        dist_sq = np.sum(diff * diff, axis=2)
+        clss = np.argmin(dist_sq, axis=1)
+        C_new = np.copy(C)
+        empty = []
+        for j in range(k):
+            mask = clss == j
+            if np.any(mask):
+                C_new[j] = np.mean(X[mask], axis=0)
+            else:
+                empty.append(j)
+        if empty:
+            C_new[empty] = np.random.uniform(low=low, high=high,
+                                             size=(len(empty), d))
         if np.allclose(C, C_new):
             return C_new, clss
         C = C_new
