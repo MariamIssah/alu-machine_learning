@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
+
 """
-K-means clustering implementation.
+This module contains a function that
+perfoms K-means on a dataset
 """
 
 import numpy as np
@@ -8,45 +10,44 @@ import numpy as np
 
 def kmeans(X, k, iterations=1000):
     """
-    Perform K-means clustering on a dataset.
+    perfoms K-means on a dataset
 
-    Args:
-        X: numpy.ndarray of shape (n, d) - the dataset
-        k: positive integer - number of clusters
-        iterations: positive integer - maximum number of iterations
+    X: numpy.ndarray (n, d) containing the dataset that
+    will be used for K-means clustering
+        - n no. of data points
+        - d no. of dimensions for each data point
+    k: positive integer - the no. of clusters
+    iterations: +ve(int) - max no. of iterations perfomed
 
-    Returns:
-        (C, clss) or (None, None) on failure.
-        C: centroids shape (k, d), clss: cluster index per point shape (n,)
+    return:
+        - C: numpy.ndarray (k, d) containing the centroid
+        for each cluster
+        - clss: numpy.ndarray (n,) containing the index of the
+        cluster in C that each data point belongs to
     """
-    if not isinstance(X, np.ndarray) or X.ndim != 2:
-        return None, None
-    if not isinstance(k, int) or k <= 0 or k > X.shape[0]:
-        return None, None
-    if not isinstance(iterations, int) or iterations <= 0:
-        return None, None
+    if type(X) is not np.ndarray or type(k) is not int:
+        return (None, None)
+    if len(X.shape) != 2 or k < 0:
+        return (None, None)
+    if type(iterations) is not int or iterations <= 0:
+        return (None, None)
     n, d = X.shape
-    low = np.min(X, axis=0)
-    high = np.max(X, axis=0)
-    C = np.random.uniform(low=low, high=high, size=(k, d))
-    for _ in range(iterations):
-        diff = X[:, np.newaxis, :] - C[np.newaxis, :, :]
-        dist_sq = np.sum(diff * diff, axis=2)
-        clss = np.argmin(dist_sq, axis=1)
-        C_new = np.copy(C)
-        empty = []
-        j = 0
-        while j < k:
-            mask = clss == j
-            if np.any(mask):
-                C_new[j] = np.mean(X[mask], axis=0)
+    if k == 0:
+        return (None, None)
+    low = np.amin(X, axis=0)
+    high = np.amax(X, axis=0)
+    C = np.random.uniform(low, high, size=(k, d))
+    for i in range(iterations):
+        clss = np.argmin(np.linalg.norm(X[:, None] - C, axis=-1), axis=-1)
+        new_C = np.copy(C)
+        for c in range(k):
+            if c not in clss:
+                new_C[c] = np.random.uniform(low, high)
             else:
-                empty.append(j)
-            j += 1
-        if empty:
-            C_new[empty] = np.random.uniform(low=low, high=high,
-                                             size=(len(empty), d))
-        if np.allclose(C, C_new):
-            return C_new, clss
-        C = C_new
-    return C, clss
+                new_C[c] = np.mean(X[clss == c], axis=0)
+        if (new_C == C).all():
+            return (C, clss)
+        else:
+            C = new_C
+    clss = np.argmin(np.linalg.norm(X[:, None] - C, axis=-1), axis=-1)
+    return (C, clss)

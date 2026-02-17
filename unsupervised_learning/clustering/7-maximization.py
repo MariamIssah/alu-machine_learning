@@ -30,7 +30,7 @@ def maximization(X, g):
         return None, None, None
     if k == 0:
         return None, None, None
-    if np.any(g < 0):
+    if np.any(g < -1e-15):
         return None, None, None
     n_soft = np.sum(g, axis=1, keepdims=True)
     if np.any(n_soft <= 0):
