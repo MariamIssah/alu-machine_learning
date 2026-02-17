@@ -13,8 +13,9 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     if not isinstance(kmin, int) or kmin < 1:
         return None, None, None, None
 
+    n, d = X.shape
     if kmax is None:
-        kmax = kmin
+        kmax = n
 
     if not isinstance(kmax, int) or kmax < kmin:
         return None, None, None, None
@@ -28,7 +29,6 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     if not isinstance(verbose, bool):
         return None, None, None, None
 
-    n, d = X.shape
     k_range = range(kmin, kmax + 1)
     num_k = len(k_range)
     log_likelihoods = np.empty(num_k)
@@ -39,7 +39,8 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
     best_result = None
 
     for idx, k in enumerate(k_range):
-        pi, m, S, g, ll = expectation_maximization(X, k, iterations, tol, verbose)
+        pi, m, S, g, ll = expectation_maximization(
+            X, k, iterations, tol, verbose)
         if ll is None:
             return None, None, None, None
 
