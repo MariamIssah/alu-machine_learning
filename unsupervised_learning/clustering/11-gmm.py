@@ -1,31 +1,27 @@
 #!/usr/bin/env python3
-"""
-Gaussian Mixture Model using scikit-learn.
-"""
-
-import numpy as np
+"""This module contains a function that perfoms
+calculates a GMM from a dataset"""
 import sklearn.mixture
 
 
 def gmm(X, k):
     """
-    Calculate a GMM from a dataset using sklearn.
-
-    Args:
-        X: numpy.ndarray of shape (n, d) - the dataset
-        k: number of clusters
-
-    Returns:
-        pi: numpy.ndarray of shape (k,) - cluster priors
-        m: numpy.ndarray of shape (k, d) - centroid means
-        S: numpy.ndarray of shape (k, d, d) - covariance matrices
-        clss: numpy.ndarray of shape (n,) - cluster indices per point
-        bic: BIC value of the fitted model (scalar)
+    calculates a GMM from a dataset
+        X is a numpy.ndarray of shape (n, d) containing the dataset
+        k is the number of clusters
+    Returns: pi, m, S, clss, bic
+        pi: is a numpy.ndarray of shape (k,) containing the cluster priors
+        m: is a numpy.ndarray of shape (k, d) containing the centroid means
+        S: is a numpy.ndarray of shape (k, d, d) containing the covariance
+            matrices
+        clss: is a numpy.ndarray of shape (n,) containing the cluster indices
+            for each data point
+        bic: is a numpy.ndarray of shape (kmax - kmin + 1) containing the BIC
+            value for each cluster size tested
     """
-    model = sklearn.mixture.GaussianMixture(n_components=k).fit(X)
-    pi = model.weights_
-    m = model.means_
-    S = model.covariances_
-    clss = model.predict(X)
-    bic = model.bic(X)
-    return pi, m, S, clss, bic
+    Gmm = sklearn.mixture.GaussianMixture(k)
+    params = Gmm.fit(X)
+    clss = Gmm.predict(X)
+    return (params.weights_, params.means_,
+            params.covariances_, clss, Gmm.bic(X))
+    
