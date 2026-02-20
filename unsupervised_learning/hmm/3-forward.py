@@ -11,12 +11,12 @@ def forward(Observation, Emission, Transition, Initial):
     Forward algorithm for a hidden markov model.
 
     Observation: numpy.ndarray of shape (T,) - index of the observation
-    Emission: numpy.ndarray of shape (N, M) - Emission[i,j] = P(obs j | state i)
-    Transition: numpy.ndarray of shape (N, N) - Transition[i,j] = P(state j | state i)
+    Emission: numpy.ndarray of shape (N, M) - P(obs j | state i)
+    Transition: numpy.ndarray of shape (N, N) - P(state j | state i)
     Initial: numpy.ndarray of shape (N, 1) - starting state probabilities
 
     Returns: (P, F) or (None, None) on failure.
-    P = likelihood of observations; F[i,j] = forward prob in state i at time j.
+    P = likelihood of observations; F[i,j] = forward prob in state i at j.
     """
     if not isinstance(Observation, np.ndarray) or Observation.ndim != 1:
         return None, None
