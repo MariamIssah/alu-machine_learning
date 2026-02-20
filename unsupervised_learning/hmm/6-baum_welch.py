@@ -41,7 +41,7 @@ def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
 
     Observations: numpy.ndarray of shape (T,) - index of the observation
     Transition: numpy.ndarray of shape (M, M) - initialized transition
-    Emission: numpy.ndarray of shape (M, N) - initialized emission (N = output)
+    Emission: numpy.ndarray of shape (M, N) - initialized emission probs
     Initial: numpy.ndarray of shape (M, 1) - initialized starting probs
     iterations: number of times expectation-maximization should be performed
 
@@ -72,10 +72,11 @@ def baum_welch(Observations, Transition, Emission, Initial, iterations=1000):
         gamma = F * B / P
         xi = np.zeros((M, M, T - 1))
         for t in range(T - 1):
-            xi[:, :, t] = (F[:, t:t+1] * Trans * Em[:, Observations[t + 1]]
-                           * B[:, t + 1]) / P
-        Init = gamma[:, 0:1]
-        Trans = np.sum(xi, axis=2) / np.sum(gamma[:, :T-1], axis=1).reshape(-1, 1)
+            num = (F[:, t:t+1] * Trans * Em[:, Observations[t + 1]]
+                   * B[:, t + 1])
+            xi[:, :, t] = num / P
+        denom = np.sum(gamma[:, :T-1], axis=1).reshape(-1, 1)
+        Trans = np.sum(xi, axis=2) / denom
         for k in range(N):
             mask = (Observations == k)
             Em[:, k] = np.sum(gamma[:, mask], axis=1) / np.sum(gamma, axis=1)
