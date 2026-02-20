@@ -16,7 +16,7 @@ def backward(Observation, Emission, Transition, Initial):
     Initial: numpy.ndarray of shape (N, 1)
 
     Returns: (P, B) or (None, None) on failure.
-    P = likelihood; B[i,j] = prob of future observations from state i at time j.
+    P = likelihood; B[i,j] = prob of future observations from state i at j.
     """
     if not isinstance(Observation, np.ndarray) or Observation.ndim != 1:
         return None, None
